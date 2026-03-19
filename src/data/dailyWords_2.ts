@@ -1,0 +1,5 @@
+export const DAILY_WORDS_2: Record<string, string> = {
+  "Family|👨‍👩‍👧‍👦": "family|家庭|👨‍👩‍👧‍👦|/ˈfæmɪli/,father|爸爸|👨|/ˈfɑːðər/,mother|妈妈|👩|/ˈmʌðər/,brother|兄弟|👦|/ˈbrʌðər/,sister|姐妹|👧|/ˈsɪstər/,grandfather|爷爷/外公|👴|/ˈɡrændˌfɑːðər/,grandmother|奶奶/外婆|👵|/ˈɡrændˌmʌðər/,uncle|叔叔/舅舅|🧔|/ˈʌŋkəl/,aunt|阿姨/姑姑|👩‍🦱|/ɑːnt/,cousin|表亲|🧒|/ˈkʌzən/,baby|婴儿|👶|/ˈbeɪbi/,son|儿子|👦|/sʌn/,daughter|女儿|👧|/ˈdɔːtər/,man|男人|👨|/mæn/,woman|女人|👩|/ˈwʊmən/,boy|男孩|👦|/bɔɪ/,girl|女孩|👧|/ɡɜːl/,friend|朋友|🤝|/frɛnd/",
+  "Colors|🎨": "color|颜色|🎨|/ˈkʌlər/,red|红色|🔴|/rɛd/,orange|橙色|🟠|/ˈɒrɪndʒ/,yellow|黄色|🟡|/ˈjɛləʊ/,green|绿色|🟢|/ɡriːn/,blue|蓝色|🔵|/bluː/,purple|紫色|🟣|/ˈpɜːpəl/,brown|棕色|🟤|/braʊn/,black|黑色|⚫|/blæk/,white|白色|⚪|/waɪt/,gray|灰色|🔘|/ɡreɪ/,pink|粉色|🌸|/pɪŋk/,gold|金色|🪙|/ɡəʊld/,silver|银色|🥈|/ˈsɪlvər/",
+  "Vehicles|🚗": "car|汽车|🚗|/kɑːr/,bus|公交车|🚌|/bʌs/,train|火车|🚆|/treɪn/,bike|自行车|🚲|/baɪk/,boat|船|⛵|/bəʊt/,ship|轮船|🚢|/ʃɪp/,plane|飞机|✈️|/pleɪn/,helicopter|直升机|🚁|/ˈhɛlɪkɒptər/,truck|卡车|🚚|/trʌk/,taxi|出租车|🚕|/ˈtæksi/,motorcycle|摩托车|🏍️|/ˈməʊtəsaɪkəl/,subway|地铁|🚇|/ˈsʌbweɪ/,ambulance|救护车|🚑|/ˈæmbjʊləns/,police car|警车|🚓|/pəˈliːs kɑːr/,fire engine|消防车|🚒|/ˈfaɪər ˈɛndʒɪn/,tractor|拖拉机|🚜|/ˈtræktər/,rocket|火箭|🚀|/ˈrɒkɪt/"
+};
