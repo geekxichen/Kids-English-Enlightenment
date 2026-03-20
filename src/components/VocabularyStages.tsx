@@ -30,6 +30,7 @@ export function StageLetters({ speakWord, playReward }: { speakWord: any, playRe
     e.preventDefault();
     const droppedLetter = e.dataTransfer.getData('letter');
     if (droppedLetter === targetLetter.l) {
+      speakWord(targetLetter.l);
       setIsSuccess(true);
       playReward();
       setTimeout(loadPuzzle, 1500);
@@ -61,6 +62,7 @@ export function StageLetters({ speakWord, playReward }: { speakWord: any, playRe
               onDragStart={e => e.dataTransfer.setData('letter', opt.l)}
               onClick={() => {
                 if (opt.l === targetLetter?.l) {
+                  speakWord(targetLetter.l);
                   setIsSuccess(true);
                   playReward();
                   setTimeout(loadPuzzle, 1500);
@@ -145,16 +147,16 @@ export function StageWords({ speakWord }: { speakWord: any }) {
 }
 
 const SIGHT_WORD_SENTENCES: Record<string, string> = {
-  "Level 1|🌱": "I can see the big red car go down.",
-  "Level 2|🌿": "She said yes, I want to ride out now.",
-  "Level 3|🍀": "Thank you for going to take some of them.",
-  "Level 4|🌲": "Always wash your right hand first before sleep.",
-  "Level 5|🌳": "I will try to draw a small warm tree today.",
-  "Level 6|🍎": "The boy and girl eat bread and cake at home.",
-  "Level 7|🍊": "Mother and father say goodbye to the sheep in the rain.",
-  "Level 8|🍋": "Anyone can draw a beautiful tree near the city door.",
-  "Level 9|🍇": "Every friend gave a great green apple to the girl.",
-  "Level 10|🍉": "It is important to learn and listen to a great idea.",
+  "Level 1|🌱": "I see a cat.",
+  "Level 2|🌿": "I can see a dog.",
+  "Level 3|🍀": "Look at the big pig.",
+  "Level 4|🌲": "This is my red car.",
+  "Level 5|🌳": "She is a good girl.",
+  "Level 6|🍎": "He will go to the park.",
+  "Level 7|🍊": "We like to play here.",
+  "Level 8|🍋": "They are in the house.",
+  "Level 9|🍇": "Come and look at this.",
+  "Level 10|🍉": "Where did you go today?",
 };
 
 export function StageSightWords({ speakWord }: { speakWord: any }) {

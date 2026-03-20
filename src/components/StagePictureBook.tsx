@@ -4,11 +4,13 @@ import { Loader2, Sparkles, Settings2 } from 'lucide-react';
 
 export function StagePictureBook() {
   const [topic, setTopic] = useState('');
-  const [difficulty, setDifficulty] = useState('初级 (幼儿园)');
+  const [difficulty, setDifficulty] = useState('初级 (幼儿园/K12)');
+  const [pageCount, setPageCount] = useState(3);
   const [apiProvider, setApiProvider] = useState('gemini');
   const [apiKeyInput, setApiKeyInput] = useState('');
-  const [customBaseUrl, setCustomBaseUrl] = useState('https://api.deepseek.com/v1');
-  const [customModel, setCustomModel] = useState('deepseek-chat');
+  const [customBaseUrl, setCustomBaseUrl] = useState('https://ark.cn-beijing.volces.com/api/v3');
+  const [customModel, setCustomModel] = useState('ep-xxx-chat');
+  const [customImageModel, setCustomImageModel] = useState('');
   const [showSettings, setShowSettings] = useState(false);
   
   const [loading, setLoading] = useState(false);
@@ -36,10 +38,10 @@ export function StagePictureBook() {
           model: "gemini-3-flash-preview",
           contents: `Write a children's picture book about: ${topic}. 
           Difficulty level: ${difficulty}.
-          If difficulty is "初级 (幼儿园)" (Beginner/Kindergarten): Use very simple English, 1 short sentence per page.
-          If difficulty is "中级 (小学)" (Intermediate/Elementary): Use slightly more complex sentences, 2-3 sentences per page.
-          If difficulty is "高级 (初中)" (Advanced/Middle School): Use descriptive paragraphs, more advanced vocabulary.
-          Keep it to exactly 3 pages. Each page should have the English text and its Chinese translation.`,
+          If difficulty is "初级 (幼儿园/K12)" (Beginner/Kindergarten): Use very simple English, 1 short sentence per page.
+          If difficulty is "中级 (小学/K12)" (Intermediate/Elementary): Use slightly more complex sentences, 2-3 sentences per page.
+          If difficulty is "高级 (初中/K12)" (Advanced/Middle School): Use descriptive paragraphs, more advanced vocabulary.
+          Keep it to exactly ${pageCount} pages. Each page should have the English text and its Chinese translation.`,
           config: {
             responseMimeType: "application/json",
             responseSchema: {
@@ -101,7 +103,7 @@ export function StagePictureBook() {
             model: customModel,
             messages: [
               { role: 'system', content: 'You are a children\'s book author. You must respond ONLY with a valid JSON array. Do not include markdown formatting like ```json. Each object in the array must have exactly these keys: "englishText", "chineseText", "imagePrompt".' },
-              { role: 'user', content: `Write a 3-page picture book about: ${topic}. Difficulty level: ${difficulty}. If Beginner/Kindergarten: 1 short sentence per page. If Intermediate/Elementary: 2-3 sentences per page. If Advanced/Middle School: descriptive paragraphs. Each page has English text and Chinese translation.` }
+              { role: 'user', content: `Write a ${pageCount}-page picture book about: ${topic}. Difficulty level: ${difficulty}. If Beginner: 1 short sentence per page. If Intermediate: 2-3 sentences per page. If Advanced: descriptive paragraphs. Each page has English text and Chinese translation.` }
             ]
           })
         });
@@ -122,8 +124,40 @@ export function StagePictureBook() {
         
         generatedPages = JSON.parse(content);
         
-        // Skip image generation for custom models as they might not support it
-        setPages(generatedPages.map((p: any) => ({ ...p, imageUrl: '' })));
+        // Generate images if customImageModel is provided
+        if (customImageModel) {
+          const pagesWithImages = await Promise.all(generatedPages.map(async (page: any) => {
+            try {
+              const imgResponse = await fetch(`${customBaseUrl.replace(/\/$/, '')}/images/generations`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${apiKeyInput}`
+                },
+                body: JSON.stringify({
+                  model: customImageModel,
+                  prompt: page.imagePrompt + ", cute children's book illustration style, bright colors, simple shapes, 2D vector art",
+                  n: 1,
+                  size: "1024x1024"
+                })
+              });
+              
+              if (!imgResponse.ok) {
+                return { ...page, imageUrl: '' };
+              }
+              
+              const imgData = await imgResponse.json();
+              const imageUrl = imgData.data?.[0]?.url || imgData.data?.[0]?.b64_json ? `data:image/png;base64,${imgData.data[0].b64_json}` : '';
+              return { ...page, imageUrl: imageUrl || imgData.data?.[0]?.url || '' };
+            } catch (e) {
+              console.error("Custom image generation failed for page", e);
+              return { ...page, imageUrl: '' };
+            }
+          }));
+          setPages(pagesWithImages);
+        } else {
+          setPages(generatedPages.map((p: any) => ({ ...p, imageUrl: '' })));
+        }
       }
 
     } catch (err: any) {
@@ -161,7 +195,7 @@ export function StagePictureBook() {
                 className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-sky-400 focus:outline-none text-sm"
               >
                 <option value="gemini">Google Gemini (支持自动配图)</option>
-                <option value="custom">其他大模型 (豆包, DeepSeek等 - 仅文本)</option>
+                <option value="custom">其他大模型 (豆包, DeepSeek等 - 支持自定义生图)</option>
               </select>
             </div>
             
@@ -173,17 +207,27 @@ export function StagePictureBook() {
                     type="text" 
                     value={customBaseUrl}
                     onChange={e => setCustomBaseUrl(e.target.value)}
-                    placeholder="例如: https://api.deepseek.com/v1"
+                    placeholder="例如: https://ark.cn-beijing.volces.com/api/v3"
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-sky-400 focus:outline-none text-sm"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-gray-500 mb-1">模型名称 (Model)</label>
+                  <label className="block text-xs font-bold text-gray-500 mb-1">文本模型名称 (Model)</label>
                   <input 
                     type="text" 
                     value={customModel}
                     onChange={e => setCustomModel(e.target.value)}
-                    placeholder="例如: deepseek-chat"
+                    placeholder="例如: ep-xxx-chat"
+                    className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-sky-400 focus:outline-none text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-gray-500 mb-1">生图模型名称 (可选, 留空则不生图)</label>
+                  <input 
+                    type="text" 
+                    value={customImageModel}
+                    onChange={e => setCustomImageModel(e.target.value)}
+                    placeholder="例如: ep-xxx-image"
                     className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:border-sky-400 focus:outline-none text-sm"
                   />
                 </div>
@@ -209,9 +253,18 @@ export function StagePictureBook() {
             onChange={e => setDifficulty(e.target.value)}
             className="px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 focus:outline-none text-lg bg-white"
           >
-            <option value="初级 (幼儿园)">初级 (幼儿园)</option>
-            <option value="中级 (小学)">中级 (小学)</option>
-            <option value="高级 (初中)">高级 (初中)</option>
+            <option value="初级 (幼儿园/K12)">初级 (幼儿园/K12)</option>
+            <option value="中级 (小学/K12)">中级 (小学/K12)</option>
+            <option value="高级 (初中/K12)">高级 (初中/K12)</option>
+          </select>
+          <select 
+            value={pageCount} 
+            onChange={e => setPageCount(Number(e.target.value))}
+            className="px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-sky-400 focus:outline-none text-lg bg-white"
+          >
+            <option value={3}>3 页</option>
+            <option value={4}>4 页</option>
+            <option value={5}>5 页</option>
           </select>
           <input 
             type="text" 
@@ -231,8 +284,8 @@ export function StagePictureBook() {
           </button>
         </div>
         {error && <p className="text-red-500 mt-4 text-center font-bold">{error}</p>}
-        {apiProvider === 'custom' && pages.length > 0 && (
-          <p className="text-orange-500 mt-2 text-center text-sm">注：当前使用的是自定义模型，暂不支持自动配图。</p>
+        {apiProvider === 'custom' && !customImageModel && pages.length > 0 && (
+          <p className="text-orange-500 mt-2 text-center text-sm">注：当前使用的是自定义模型，未配置生图模型，暂不支持配图。</p>
         )}
       </div>
 

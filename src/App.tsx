@@ -53,8 +53,14 @@ export default function App() {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
       let textToSpeak = text;
-      if (text.toLowerCase() === 'ag') textToSpeak = 'agg';
-      if (text.toLowerCase() === 'ap') textToSpeak = 'app';
+      
+      // Handle CVC word families (e.g., "-eg", "-ap") by spelling them out
+      if (text.startsWith('-') && text.length === 3) {
+        textToSpeak = `${text[1]}, ${text[2]}`;
+      } else {
+        if (text.toLowerCase() === 'ag') textToSpeak = 'agg';
+        if (text.toLowerCase() === 'ap') textToSpeak = 'app';
+      }
       
       const msg = new SpeechSynthesisUtterance(textToSpeak);
       msg.lang = 'en-US'; 
