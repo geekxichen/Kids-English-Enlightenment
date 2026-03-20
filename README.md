@@ -62,6 +62,7 @@
 2.安装依赖
 cd phonics-hub
 npm install
+   ```
 # 或者 yarn install
 3.启动本地开发服务器
 npm run dev
