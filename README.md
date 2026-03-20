@@ -56,7 +56,19 @@
 ---
 
 ## 📦 快速启动 (Getting Started)
-
 1. **克隆项目到本地**
    ```bash
-   git clone [https://github.com/yourusername/phonics-hub.git](https://github.com/yourusername/phonics-hub.git)
+   git clone [https://github.com/yourusername/phonics-hub.git](https://github.com/geekxichen/Kids-English-Enlightenment.git)
+2.安装依赖
+cd phonics-hub
+npm install
+# 或者 yarn install
+3.启动本地开发服务器
+npm run dev
+# 或者 yarn dev
+4.打开浏览器访问 http://localhost:3000 (或控制台提示的端口)。
+
+---
+
+## 贡献与反馈 (Contributing)
+如果你对儿童教育软件有热情，欢迎提交 Pull Request 或发起 Issue 讨论！
